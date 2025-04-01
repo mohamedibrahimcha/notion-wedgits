@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Days Since Last Action</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: black;
+      color: white;
+    }
+
+    .container {
+      background: black;
+      border-radius: 20px;
+      padding: 30px;
+      display: inline-block;
+      box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .time-box {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .time-unit {
+      text-align: center;
+      font-size: 2em;
+    }
+
+    .label {
+      font-size: 0.8em;
+      opacity: 0.7;
+    }
+
+    .reset-button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: black;
+      border: 2px solid white;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+    }
+
+    .reset-button svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="time-box">
+      <div class="time-unit">
+        <div id="days">0</div>
+        <div class="label">DAYS</div>
+      </div>
+      <div class="time-unit">
+        <div id="hours">0</div>
+        <div class="label">HOURS</div>
+      </div>
+      <div class="time-unit">
+        <div id="minutes">0</div>
+        <div class="label">MINUTES</div>
+      </div>
+      <div class="time-unit">
+        <div id="seconds">0</div>
+        <div class="label">SECONDS</div>
+      </div>
+    </div>
+    <button class="reset-button" onclick="resetCounter()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-2.34-5.66L15 9h7V2l-2.54 2.54A9.97 9.97 0 0 0 12 2z" />
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    const storageKey = "lastActionDate";
+
+    function getTimeSinceLastAction() {
+      const lastAction = localStorage.getItem(storageKey);
+      if (!lastAction) return {days: 0, hours: 0, minutes: 0, seconds: 0};
+
+      const lastDate = new Date(parseInt(lastAction));
+      const now = new Date();
+      const diffTime = Math.abs(now - lastDate);
+
+      return {
+        days: Math.floor(diffTime / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diffTime / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diffTime / (1000 * 60)) % 60),
+        seconds: Math.floor((diffTime / 1000) % 60),
+      };
+    }
+
+    function resetCounter() {
+      localStorage.setItem(storageKey, Date.now());
+      updateTimer();
+    }
+
+    function updateTimer() {
+      const time = getTimeSinceLastAction();
+      document.getElementById("days").textContent = time.days;
+      document.getElementById("hours").textContent = time.hours;
+      document.getElementById("minutes").textContent = time.minutes;
+      document.getElementById("seconds").textContent = time.seconds;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
+</body>
+
+</html>
